@@ -1,0 +1,12 @@
+streamlit>=1.36
+numpy>=1.26
+pandas>=2.2
+plotly>=5.22
+astropy>=6.1
+scipy>=1.13
+matplotlib>=3.9
+kaleido>=0.2
+pypdf>=5.0
+
+# Opcional cuando se use Python 3.11/3.12:
+# spectutils>=1.15
