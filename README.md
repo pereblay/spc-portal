@@ -1,2 +1,2 @@
-# spc-prortal
+# spc-portal
 Spectral Classification Portal
