@@ -7,7 +7,15 @@ Loads a spectrum from disk.
 
 Supported formats:
 - FITS: expects a 1D spectrum and tries to reconstruct the wavelength axis from FITS WCS/header keywords such as `CRVAL1`, `CDELT1`, `CD1_1`, and `CRPIX1`.
+- FITS tables: accepts table columns with common wavelength names such as `wavelength`, `wave`, `lambda`, `lam`, `wl`, or `loglam`, and flux names such as `flux`, `counts`, `intensity`, `spectrum`, or `data`.
 - TXT, DAT, CSV, TSV: expects at least two columns. The first column is wavelength and the second column is flux.
+
+### FITS Extension
+Shown when a FITS file is uploaded.
+
+The portal inspects every HDU/extension and reports whether it can read spectral data and a wavelength solution. You can select the extension to use. This is useful for FITS files where the science spectrum is not stored in the primary HDU, or where the spectrum is stored as a binary table instead of a WCS-calibrated image.
+
+The diagnostic table reports the HDU index, name, type, shape, whether it is readable, and whether wavelength calibration or wavelength/flux table columns were found.
 
 ### Use Example Spectrum
 Loads a synthetic teaching spectrum. This is useful for testing the interface before using real data.

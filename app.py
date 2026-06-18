@@ -8,7 +8,7 @@ import streamlit as st
 
 from spectral_portal.core.click_selector import continuum_click_selector
 from spectral_portal.core.dibs import DIBDetection, detect_dib_is_features
-from spectral_portal.core.io import Spectrum, load_example, load_spectrum
+from spectral_portal.core.io import Spectrum, inspect_fits_hdus, load_example, load_fits, load_spectrum
 from spectral_portal.core.lines import LINE_COLORS, families, nearest_line, selected_lines
 from spectral_portal.core.measurements import crop_spectrum, equivalent_width, line_center_and_intensity
 from spectral_portal.core.normalize import fit_continuum, normalize_flux
@@ -418,6 +418,7 @@ def main() -> None:
     init_state()
 
     st.title("Spectral Classification Portal")
+    selected_fits_hdu: int | None = None
 
     with st.sidebar:
         with st.expander("1. Spectrum upload", expanded=True):
@@ -426,10 +427,52 @@ def main() -> None:
                 type=["fits", "fit", "fts", "txt", "dat", "csv", "tsv"],
                 on_change=clear_normalization,
             )
+            if uploaded is not None and Path(uploaded.name).suffix.lower() in {".fits", ".fit", ".fts"}:
+                try:
+                    hdu_infos = inspect_fits_hdus(uploaded)
+                    readable = [info for info in hdu_infos if info.supported]
+                    options = readable or hdu_infos
+                    labels = [
+                        f"HDU {info.index}: {info.name} | {info.data_type} | {info.shape}"
+                        for info in options
+                    ]
+                    selected_label = st.selectbox(
+                        "FITS extension",
+                        labels,
+                        help="Choose the FITS HDU/extension to read. The diagnostic below reports whether wavelength calibration or table columns were found.",
+                        on_change=clear_normalization,
+                    )
+                    selected_info = options[labels.index(selected_label)]
+                    selected_fits_hdu = selected_info.index
+                    if selected_info.supported:
+                        st.success(selected_info.message)
+                    else:
+                        st.warning(selected_info.message)
+                    with st.expander("FITS HDU diagnostics", expanded=False):
+                        st.dataframe(
+                            [
+                                {
+                                    "HDU": info.index,
+                                    "Name": info.name,
+                                    "Type": info.data_type,
+                                    "Shape": info.shape,
+                                    "Readable": info.supported,
+                                    "WCS/Table OK": info.wcs_ok,
+                                    "Message": info.message,
+                                }
+                                for info in hdu_infos
+                            ],
+                            width="stretch",
+                        )
+                except Exception as exc:
+                    st.warning(f"Could not inspect FITS extensions: {exc}")
             use_example = st.toggle("Use example spectrum", value=uploaded is None)
 
     try:
-        spectrum = load_spectrum(uploaded) if uploaded is not None else load_example() if use_example else None
+        if uploaded is not None and Path(uploaded.name).suffix.lower() in {".fits", ".fit", ".fts"}:
+            spectrum = load_fits(uploaded, hdu_index=selected_fits_hdu)
+        else:
+            spectrum = load_spectrum(uploaded) if uploaded is not None else load_example() if use_example else None
     except Exception as exc:
         st.error(f"Could not load the spectrum: {exc}")
         return
