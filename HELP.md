@@ -96,6 +96,11 @@ Student name printed in the exported report.
 ### Course
 Course or group name printed in the exported report.
 
+### Output PDF File Name
+File name used for the downloaded PDF. The same name is used whether the portal creates a new report or appends the current report to a previous PDF.
+
+If the `.pdf` extension is omitted, the portal adds it automatically.
+
 ### Previous PDF Report
 Optional PDF upload. If a previous report is provided, the current report is appended as additional pages at the end of that PDF.
 

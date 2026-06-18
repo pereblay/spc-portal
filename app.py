@@ -218,6 +218,16 @@ def format_result_table(rows: list[dict]) -> str:
     return "\n".join(lines)
 
 
+def pdf_file_name(value: str, default: str = "spectral_classification_report.pdf") -> str:
+    cleaned = "".join(char if char.isalnum() or char in {"-", "_", ".", " "} else "_" for char in value.strip())
+    cleaned = "_".join(cleaned.split())
+    if not cleaned:
+        cleaned = default
+    if not cleaned.lower().endswith(".pdf"):
+        cleaned = f"{cleaned}.pdf"
+    return cleaned
+
+
 def y_range(values: np.ndarray) -> tuple[float, float]:
     ymin = float(np.nanpercentile(values, 1))
     ymax = float(np.nanpercentile(values, 99))
@@ -584,6 +594,12 @@ def main() -> None:
         with st.expander("4. Generate report", expanded=False):
             st.text_input("Student name", key="report_student_name")
             st.text_input("Course", key="report_course")
+            st.text_input(
+                "Output PDF file name",
+                key="report_output_name",
+                value="spectral_classification_report.pdf",
+                help="Used for both a new PDF report and an appended PDF report.",
+            )
             previous_report_pdf = st.file_uploader(
                 "Previous PDF report",
                 type=["pdf"],
@@ -908,6 +924,7 @@ def main() -> None:
 
     student_name = st.session_state.get("report_student_name", "")
     course = st.session_state.get("report_course", "")
+    output_pdf_name = pdf_file_name(st.session_state.get("report_output_name", ""))
 
     report = build_markdown_report(
         student_name=student_name,
@@ -948,12 +965,10 @@ def main() -> None:
         normalized_flux=normalized if normalized is not None else [],
     )
     pdf_download = pdf_report
-    pdf_file_name = "spectral_classification_report.pdf"
     pdf_button_label = "Generate PDF report"
     if previous_report_pdf is not None:
         try:
             pdf_download = append_pdf_report(previous_report_pdf.getvalue(), pdf_report)
-            pdf_file_name = "spectral_classification_report_appended.pdf"
             pdf_button_label = "Generate appended PDF report"
         except Exception as exc:
             st.error(f"Could not append the report to the previous PDF: {exc}")
@@ -962,7 +977,7 @@ def main() -> None:
         st.download_button(
             pdf_button_label,
             data=pdf_download,
-            file_name=pdf_file_name,
+            file_name=output_pdf_name,
             mime="application/pdf",
             type="primary",
         )
