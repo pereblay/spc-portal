@@ -74,6 +74,7 @@ export default function (component) {
   }
   function fmt(value) {
     const absValue = Math.abs(value)
+    if (absValue > 0 && absValue < 0.001) return value.toExponential(2)
     if (absValue >= 1000) return value.toFixed(0)
     if (absValue >= 100) return value.toFixed(1)
     if (absValue >= 10) return value.toFixed(2)
@@ -217,7 +218,10 @@ def continuum_click_selector(
         y_for_scale = y_for_scale[np.isfinite(y_for_scale)]
     ymin = float(np.nanmin(y_for_scale))
     ymax = float(np.nanmax(y_for_scale))
-    padding = 0.08 * max(ymax - ymin, 1e-6)
+    span = ymax - ymin
+    if span <= 0 or not np.isfinite(span):
+        span = max(abs(ymax), 1.0)
+    padding = 0.08 * span
     x, y = _decimate(x, y)
     return _CONTINUUM_SELECTOR(
         key=key,

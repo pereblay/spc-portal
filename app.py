@@ -221,8 +221,22 @@ def format_result_table(rows: list[dict]) -> str:
 def y_range(values: np.ndarray) -> tuple[float, float]:
     ymin = float(np.nanpercentile(values, 1))
     ymax = float(np.nanpercentile(values, 99))
-    padding = 0.08 * max(ymax - ymin, 1e-6)
+    span = ymax - ymin
+    if span <= 0 or not np.isfinite(span):
+        span = max(abs(ymax), 1.0)
+    padding = 0.08 * span
     return ymin - padding, ymax + padding
+
+
+def y_tickformat(values: np.ndarray) -> str | None:
+    finite = np.asarray(values, dtype=float)
+    finite = finite[np.isfinite(finite)]
+    if finite.size == 0:
+        return None
+    max_abs = float(np.nanmax(np.abs(finite)))
+    if 0 < max_abs < 1e-3 or max_abs >= 1e5:
+        return ".2e"
+    return None
 
 
 def show_help() -> None:
@@ -259,6 +273,7 @@ def render_original_plot(
             name="Original flux",
             line=dict(color="#243b53", width=1.25),
             marker=dict(color="#243b53", size=3, opacity=0.22),
+            hovertemplate="Wavelength=%{x:.3f}<br>Flux=%{y:.4e}<extra></extra>",
         )
     )
     if continuum is not None:
@@ -269,6 +284,7 @@ def render_original_plot(
                 mode="lines",
                 name="Fitted continuum",
                 line=dict(color="#d95f02", width=2.0, dash="dash"),
+                hovertemplate="Wavelength=%{x:.3f}<br>Continuum=%{y:.4e}<extra></extra>",
             )
         )
     if manual_points:
@@ -279,6 +295,7 @@ def render_original_plot(
                 mode="markers",
                 name="Continuum points",
                 marker=dict(color="#d95f02", size=8, symbol="circle-open", line=dict(width=2)),
+                hovertemplate="Wavelength=%{x:.3f}<br>Flux=%{y:.4e}<extra></extra>",
             )
         )
 
@@ -304,7 +321,7 @@ def render_original_plot(
         template="plotly_white",
     )
     fig.update_xaxes(showgrid=True, gridcolor="#e9ecef", zeroline=False)
-    fig.update_yaxes(showgrid=True, gridcolor="#e9ecef", range=[ymin, ymax])
+    fig.update_yaxes(showgrid=True, gridcolor="#e9ecef", range=[ymin, ymax], tickformat=y_tickformat(spectrum.flux))
     return fig
 
 
@@ -384,11 +401,12 @@ def render_normalized_plot(
 
 
 def spectrum_summary(spectrum: Spectrum) -> None:
-    cols = st.columns(4)
+    cols = st.columns(5)
     cols[0].metric("Points", f"{spectrum.size:,}".replace(",", "."))
     cols[1].metric("lambda min", f"{spectrum.wavelength_min:.2f}")
     cols[2].metric("lambda max", f"{spectrum.wavelength_max:.2f}")
-    cols[3].metric("Input", spectrum.source_type)
+    cols[3].metric("Flux range", f"{np.nanmin(spectrum.flux):.2e} - {np.nanmax(spectrum.flux):.2e}")
+    cols[4].metric("Input", spectrum.source_type)
     with st.expander("Detected metadata", expanded=False):
         st.json(spectrum.metadata)
 
