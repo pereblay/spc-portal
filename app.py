@@ -411,12 +411,11 @@ def render_normalized_plot(
 
 
 def spectrum_summary(spectrum: Spectrum) -> None:
-    cols = st.columns(5)
+    cols = st.columns(4)
     cols[0].metric("Points", f"{spectrum.size:,}".replace(",", "."))
     cols[1].metric("lambda min", f"{spectrum.wavelength_min:.2f}")
     cols[2].metric("lambda max", f"{spectrum.wavelength_max:.2f}")
-    cols[3].metric("Flux range", f"{np.nanmin(spectrum.flux):.2e} - {np.nanmax(spectrum.flux):.2e}")
-    cols[4].metric("Input", spectrum.source_type)
+    cols[3].metric("Input", spectrum.source_type)
     with st.expander("Detected metadata", expanded=False):
         st.json(spectrum.metadata)
 
