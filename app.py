@@ -147,6 +147,47 @@ st.markdown(
       color: var(--portal-dark) !important;
       caret-color: var(--portal-dark) !important;
     }
+    .classification-workflow {
+      margin: 0.8rem 0 1.2rem;
+      padding: 0.85rem 0 0.15rem;
+      border-top: 1px solid #ced4da;
+      border-bottom: 1px solid #dee2e6;
+    }
+    .classification-workflow-title {
+      margin: 0 0 0.75rem;
+      color: #212529;
+      font-size: 1rem;
+      font-weight: 650;
+    }
+    .classification-workflow-steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.1rem;
+    }
+    .classification-workflow-step {
+      min-width: 0;
+      padding: 0 0 0.85rem;
+    }
+    .classification-workflow-number {
+      display: block;
+      margin-bottom: 0.25rem;
+      color: #343a40;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .classification-workflow-step p {
+      margin: 0;
+      color: #495057;
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+    @media (max-width: 780px) {
+      .classification-workflow-steps {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+      }
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -271,6 +312,31 @@ def render_help_page() -> None:
     st.button("Back to classification", type="primary", on_click=hide_help, key="help_back_top")
     st.markdown(help_text)
     st.button("Back to classification", type="primary", on_click=hide_help, key="help_back_bottom")
+
+
+def render_classification_workflow() -> None:
+    st.markdown(
+        """
+        <section class="classification-workflow" aria-label="Classification workflow">
+          <h3 class="classification-workflow-title">Classification workflow</h3>
+          <div class="classification-workflow-steps">
+            <div class="classification-workflow-step">
+              <span class="classification-workflow-number">Step 1</span>
+              <p>Compare with the MK main sequence and select the most likely spectral type.</p>
+            </div>
+            <div class="classification-workflow-step">
+              <span class="classification-workflow-number">Step 2</span>
+              <p>Select the subtype by comparison with the corresponding series in Gray's Digital Atlas, using the indicated line intensities and ratios.</p>
+            </div>
+            <div class="classification-workflow-step">
+              <span class="classification-workflow-number">Step 3</span>
+              <p>Assign the luminosity class by comparing with the nearest Gray luminosity sequence, recording the relevant line-intensity and line-ratio evidence.</p>
+            </div>
+          </div>
+        </section>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def render_original_plot(
@@ -782,6 +848,9 @@ def main() -> None:
                     st.rerun()
     else:
         st.plotly_chart(original_fig, width="stretch")
+
+    if uploaded is not None:
+        render_classification_workflow()
 
     if normalization_method == "Manual points":
         with st.expander("Continuum points", expanded=True):
