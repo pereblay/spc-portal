@@ -1,5 +1,17 @@
 This portal is designed for classroom spectral classification of stars. The workflow is: load a spectrum, inspect it, crop the useful wavelength range, normalize the continuum, display reference spectral lines, measure diagnostic features, write the classification rationale, and export a report.
 
+## Qualitative Classification Process
+
+Spectral classification is an iterative comparison process rather than a single automatic measurement. Start by checking data quality, wavelength calibration, the selected spectral range, and continuum placement. A poor normalization can change apparent line depths and lead to an incorrect classification.
+
+First compare the overall morphology of the normalized spectrum with the compact MK main sequence. The relative strength and presence of hydrogen, helium, metal lines, molecular bands, and the general density of absorption features provide an initial O-B-A-F-G-K-M type estimate.
+
+Once the broad type is identified, compare the object with the corresponding subtype sequence in Gray's Digital Atlas. Subtype assignment should rely on several diagnostic features together: changes in line intensity, the appearance or disappearance of particular species, and ratios between nearby lines. Avoid assigning a subtype from a single uncertain feature.
+
+Finally compare the spectrum with the nearest luminosity sequence for the adopted type. Luminosity class is inferred from gravity-sensitive line widths, line intensities, blends, and diagnostic ratios. Record which observations support the selected class and which features remain ambiguous.
+
+The final classification should be the type and luminosity class that explain the largest coherent set of spectral evidence. Uncertainty, limited wavelength coverage, noise, interstellar absorption, telluric residuals, and imperfect normalization should be stated explicitly in the evidence and comments fields.
+
 ## Panel 1: Spectrum Upload
 
 ### Upload FITS or TXT
