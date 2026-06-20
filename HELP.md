@@ -138,6 +138,11 @@ Individual points can be removed with the `Delete` button.
 
 This plot shows the final normalized spectrum after `Compute normalization` has been pressed. Reference line overlays are shown here, not on the original spectrum.
 
+### Compare To MK Sequence
+Shows or hides an additional comparison plot. The studied normalized spectrum is shown at the top, followed by one online JHC luminosity-class V reference for each main spectral class: O5, B4, A5, F4, G4, K4, and M5.
+
+All spectra are drawn in the same figure, use exactly the same wavelength scale, and are vertically offset with enhanced contrast for visual classification. Reference spectra are downloaded from the official MAST JHC catalog and cached by the application.
+
 ## Evidence Tab
 
 ### Equivalent Width

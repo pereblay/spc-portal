@@ -11,6 +11,7 @@ from spectral_portal.core.dibs import DIBDetection, detect_dib_is_features
 from spectral_portal.core.io import Spectrum, inspect_fits_hdus, load_example, load_fits, load_spectrum
 from spectral_portal.core.lines import LINE_COLORS, families, nearest_line, selected_lines
 from spectral_portal.core.measurements import crop_spectrum, equivalent_width, line_center_and_intensity
+from spectral_portal.core.mk_sequence import load_main_sequence
 from spectral_portal.core.normalize import fit_continuum, normalize_flux
 from spectral_portal.core.report import append_pdf_report, build_markdown_report, build_pdf_report
 
@@ -166,6 +167,7 @@ def init_state() -> None:
     st.session_state.setdefault("ratio_clicks", [])
     st.session_state.setdefault("ew_results", [])
     st.session_state.setdefault("ratio_results", [])
+    st.session_state.setdefault("show_mk_sequence", False)
     st.session_state.setdefault("spectral_evidence", "")
     st.session_state.setdefault("ew_notes", "")
     st.session_state.setdefault("spectral_type", "")
@@ -180,6 +182,11 @@ def clear_normalization() -> None:
     st.session_state.continuum = None
     st.session_state.normalized = None
     st.session_state.normalization_context = None
+
+
+@st.cache_data(show_spinner=False, ttl=7 * 24 * 60 * 60)
+def cached_mk_main_sequence() -> list[dict[str, object]]:
+    return load_main_sequence()
 
 
 def interpolated_flux_at(wavelength: np.ndarray, flux: np.ndarray, target_wavelength: float) -> float:
@@ -405,8 +412,100 @@ def render_normalized_plot(
         yaxis_title="Normalized flux",
         template="plotly_white",
     )
-    fig.update_xaxes(showgrid=True, gridcolor="#e9ecef", zeroline=False)
+    fig.update_xaxes(
+        showgrid=True,
+        gridcolor="#e9ecef",
+        zeroline=False,
+        range=[float(np.nanmin(wavelength)), float(np.nanmax(wavelength))],
+    )
     fig.update_yaxes(showgrid=True, gridcolor="#e9ecef", range=[ymin - padding, ymax + 3 * padding])
+    return fig
+
+
+def render_mk_comparison_plot(
+    studied_wavelength: np.ndarray,
+    studied_normalized: np.ndarray,
+    studied_label: str,
+    sequence: list[dict[str, object]],
+    wavelength_min: float,
+    wavelength_max: float,
+) -> go.Figure:
+    fig = go.Figure()
+    offset = 1.7
+    contrast = 1.6
+    colors = ["#111827", "#4666e5", "#6688ed", "#8ba7ef", "#adb5bd", "#e59b7c", "#ed775e", "#d94841"]
+    entries: list[dict[str, object]] = [
+        {
+            "spectral_type": "Studied spectrum",
+            "star": studied_label,
+            "wavelength": np.asarray(studied_wavelength, dtype=float),
+            "normalized_flux": np.asarray(studied_normalized, dtype=float),
+        },
+        *sequence,
+    ]
+    baselines: list[float] = []
+    labels: list[str] = []
+
+    for index, (entry, color) in enumerate(zip(entries, colors)):
+        wavelength = np.asarray(entry["wavelength"], dtype=float)
+        normalized = np.asarray(entry["normalized_flux"], dtype=float)
+        baseline = (len(entries) - 1 - index) * offset
+        displayed = baseline + 1.0 + contrast * (normalized - 1.0)
+        baselines.append(baseline)
+        labels.append(
+            f'<b>Studied</b>  {entry["star"]}'
+            if index == 0
+            else f'{entry["spectral_type"]}  {entry["star"]}'
+        )
+        fig.add_trace(
+            go.Scattergl(
+                x=wavelength,
+                y=displayed,
+                mode="lines",
+                name=str(entry["spectral_type"]),
+                line=dict(color=color, width=2.0 if index == 0 else 1.4),
+                customdata=normalized,
+                hovertemplate=(
+                    f'{entry["spectral_type"]} · {entry["star"]}'
+                    "<br>Wavelength=%{x:.2f} Å<br>Normalized flux=%{customdata:.3f}<extra></extra>"
+                ),
+            )
+        )
+        fig.add_hline(y=baseline + 1.0, line_width=0.5, line_color="#ced4da")
+
+    top_features = ((3933.7, "Ca II K"), (4101.7, "Hδ"), (4340.5, "Hγ"), (4861.3, "Hβ"))
+    bottom_features = ((3970.0, "Ca II H+Hε"), (4305.0, "CH G"), (4471.5, "He I"), (4481.2, "Mg II"), (4954.0, "TiO"))
+    visible_top = tuple(feature for feature in top_features if wavelength_min <= feature[0] <= wavelength_max)
+    visible_bottom = tuple(feature for feature in bottom_features if wavelength_min <= feature[0] <= wavelength_max)
+    y_min = min(baselines) - 0.7
+    y_max = max(baselines) + 1.9
+    for wavelength, label in visible_top + visible_bottom:
+        color = "#495057" if "Ca" in label else "#6f42c1" if label.startswith("H") else "#2b8a3e" if label in {"CH G", "TiO"} else "#9c4f15"
+        fig.add_vline(x=wavelength, line_width=0.8, line_dash="dot", line_color=color, opacity=0.55)
+    for wavelength, label in visible_top:
+        fig.add_annotation(x=wavelength, y=y_max, text=label, textangle=-90, showarrow=False, yanchor="bottom", font=dict(size=11, color="#343a40"))
+    for wavelength, label in visible_bottom:
+        fig.add_annotation(x=wavelength, y=y_min, text=label, textangle=-90, showarrow=False, yanchor="top", font=dict(size=11, color="#343a40"))
+
+    fig.update_layout(
+        height=820,
+        margin=dict(l=115, r=20, t=58, b=60),
+        template="plotly_white",
+        showlegend=False,
+        hovermode="closest",
+        title=dict(text="Studied spectrum compared with the JHC main sequence", x=0.5, xanchor="center", font=dict(size=16)),
+        xaxis_title="Wavelength (Å)",
+        yaxis_title="Normalized flux + vertical offset",
+    )
+    fig.update_xaxes(range=[float(wavelength_min), float(wavelength_max)], showgrid=True, gridcolor="#e9ecef", zeroline=False)
+    fig.update_yaxes(
+        range=[y_min - 0.9, y_max + 0.9],
+        tickmode="array",
+        tickvals=[baseline + 1.0 for baseline in baselines],
+        ticktext=labels,
+        showgrid=False,
+        zeroline=False,
+    )
     return fig
 
 
@@ -735,7 +834,10 @@ def main() -> None:
             st.error(f"Could not normalize: {exc}")
     st.caption("The continuum and normalized spectrum are updated only from the Crop and normalization panel.")
 
-    st.subheader("Cropped and normalized spectrum")
+    normalized_title, compare_button = st.columns([4.2, 1.3], vertical_alignment="center")
+    normalized_title.subheader("Cropped and normalized spectrum")
+    if compare_button.button("Compare to MK sequence", use_container_width=True):
+        st.session_state.show_mk_sequence = not st.session_state.show_mk_sequence
     dib_detections: list[DIBDetection] = []
     if dib_is_detector and normalized is not None:
         dib_detections = detect_dib_is_features(
@@ -772,6 +874,32 @@ def main() -> None:
         )
     elif dib_is_detector:
         st.caption("No DIB/IS candidate passed the current detection threshold in this wavelength range.")
+
+    if st.session_state.show_mk_sequence and normalized is None:
+        st.warning("Compute the normalization before comparing the studied spectrum with the MK sequence.")
+    elif st.session_state.show_mk_sequence:
+        try:
+            with st.spinner("Loading the JHC main-sequence reference from MAST..."):
+                mk_sequence = cached_mk_main_sequence()
+            mk_left, mk_plot, mk_right = st.columns([0.06, 0.88, 0.06])
+            with mk_plot:
+                st.plotly_chart(
+                    render_mk_comparison_plot(
+                        cropped_wl,
+                        normalized,
+                        spectrum.source_name,
+                        mk_sequence,
+                        float(cropped_wl[0]),
+                        float(cropped_wl[-1]),
+                    ),
+                    width="stretch",
+                )
+                st.caption(
+                    "Top: studied spectrum. Below: JHC/MAST O5 V, B4 V, A5 V, F4 V, G4 V, K4 V and M5 V. "
+                    "All curves share the same wavelength scale and vertical contrast ×1.6."
+                )
+        except Exception as exc:
+            st.error(f"Could not load the online MK reference sequence: {exc}")
 
     if st.session_state.measurement_mode and normalized is not None:
         mode_label = "equivalent width" if st.session_state.measurement_mode == "ew" else "line ratio"
