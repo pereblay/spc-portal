@@ -658,7 +658,7 @@ def main() -> None:
                         )
                 except Exception as exc:
                     st.warning(f"Could not inspect FITS extensions: {exc}")
-            use_example = st.toggle("Use example spectrum", value=uploaded is None)
+            use_example = st.toggle("Use example spectrum", value=False)
 
     try:
         if uploaded is not None and Path(uploaded.name).suffix.lower() in {".fits", ".fit", ".fts"}:
@@ -849,7 +849,7 @@ def main() -> None:
     else:
         st.plotly_chart(original_fig, width="stretch")
 
-    if uploaded is not None:
+    if uploaded is not None or use_example:
         render_classification_workflow()
 
     if normalization_method == "Manual points":
