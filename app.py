@@ -909,8 +909,12 @@ def main() -> None:
 
     normalized_title, compare_button = st.columns([4.2, 1.3], vertical_alignment="center")
     normalized_title.subheader("Cropped and normalized spectrum")
-    if compare_button.button("Compare to MK sequence", use_container_width=True):
+    comparison_button_label = (
+        "Hide MK comparison" if st.session_state.show_mk_sequence else "Compare to MK sequence"
+    )
+    if compare_button.button(comparison_button_label, use_container_width=True):
         st.session_state.show_mk_sequence = not st.session_state.show_mk_sequence
+        st.rerun()
     dib_detections: list[DIBDetection] = []
     if dib_is_detector and normalized is not None:
         dib_detections = detect_dib_is_features(
