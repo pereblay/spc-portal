@@ -262,17 +262,29 @@ def format_result_table(rows: list[dict]) -> str:
     if not rows:
         return ""
     headers = list(rows[0].keys())
-    lines = [" | ".join(headers), " | ".join(["---"] * len(headers))]
+    lines = [
+        f"| {' | '.join(headers)} |",
+        f"| {' | '.join(['---'] * len(headers))} |",
+    ]
     for row in rows:
         values = []
         for header in headers:
             value = row.get(header, "")
             if isinstance(value, float):
-                values.append(f"{value:.5g}")
+                text = f"{value:.5g}"
             else:
-                values.append(str(value))
-        lines.append(" | ".join(values))
+                text = str(value)
+            values.append(text.replace("|", "\\|").replace("\n", " "))
+        lines.append(f"| {' | '.join(values)} |")
     return "\n".join(lines)
+
+
+def report_line_label(row: dict, index: int) -> str:
+    element = str(row.get(f"Element {index}", ""))
+    line = str(row.get(f"Line {index}", ""))
+    wavelength = float(row.get(f"lambda_ref_{index}", np.nan))
+    wavelength_text = f"{wavelength:.2f} A" if np.isfinite(wavelength) else "wavelength unavailable"
+    return f"{element} - {line} ({wavelength_text})"
 
 
 def pdf_file_name(value: str, default: str = "spectral_classification_report.pdf") -> str:
@@ -1154,8 +1166,27 @@ def main() -> None:
         comments = st.text_area("General comments", key="classification_comments", height=110)
         st.caption(f"Declared confidence: {confidence}")
 
-    ew_table = format_result_table(st.session_state.ew_results)
-    ratio_table = format_result_table(st.session_state.ratio_results)
+    ew_report_rows = [
+        {
+            "Element": row.get("Element", ""),
+            "Line": row.get("Line", ""),
+            "Wavelength": row.get("lambda_ref", np.nan),
+            "Start": row.get("start", np.nan),
+            "End": row.get("end", np.nan),
+            "EW": row.get("EW", np.nan),
+        }
+        for row in st.session_state.ew_results
+    ]
+    ratio_report_rows = [
+        {
+            "Line 1": report_line_label(row, 1),
+            "Line 2": report_line_label(row, 2),
+            "Ratio": row.get("ratio_1_2", np.nan),
+        }
+        for row in st.session_state.ratio_results
+    ]
+    ew_table = format_result_table(ew_report_rows)
+    ratio_table = format_result_table(ratio_report_rows)
 
     student_name = st.session_state.get("report_student_name", "")
     course = st.session_state.get("report_course", "")
@@ -1190,8 +1221,8 @@ def main() -> None:
         ew_notes=ew_notes,
         ew_table=ew_table,
         ratio_table=ratio_table,
-        ew_rows=st.session_state.ew_results,
-        ratio_rows=st.session_state.ratio_results,
+        ew_rows=ew_report_rows,
+        ratio_rows=ratio_report_rows,
         spectral_type=spectral_type,
         spectral_type_reason=spectral_type_reason,
         luminosity_class=luminosity_class,

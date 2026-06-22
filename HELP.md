@@ -133,7 +133,8 @@ Exports a standardized PDF report including:
 - normalized spectrum plot,
 - spectral evidence,
 - equivalent-width table,
-- line-ratio table,
+- line-ratio table with each line's element and reference wavelength plus the
+  measured ratio (centers and individual intensities are omitted),
 - spectral type and luminosity class,
 - classification confidence (low, medium, or high),
 - student justifications,
