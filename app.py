@@ -161,7 +161,7 @@ st.markdown(
     }
     .classification-workflow-steps {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 1.1rem;
     }
     .classification-workflow-step {
@@ -320,6 +320,10 @@ def render_classification_workflow() -> None:
         <section class="classification-workflow" aria-label="Classification workflow">
           <h3 class="classification-workflow-title">Classification workflow</h3>
           <div class="classification-workflow-steps">
+            <div class="classification-workflow-step">
+              <span class="classification-workflow-number">Step 0</span>
+              <p>Crop the useful wavelength range, fit the continuum, and normalize the spectrum.</p>
+            </div>
             <div class="classification-workflow-step">
               <span class="classification-workflow-number">Step 1</span>
               <p>Compare with the MK main sequence and select the most likely spectral type.</p>
