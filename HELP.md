@@ -12,6 +12,13 @@ Finally compare the spectrum with the nearest luminosity sequence for the adopte
 
 The final classification should be the type and luminosity class that explain the largest coherent set of spectral evidence. Uncertainty, limited wavelength coverage, noise, interstellar absorption, telluric residuals, and imperfect normalization should be stated explicitly in the evidence and comments fields.
 
+### Workflow Summary
+
+- `Step 0`: Crop the useful wavelength range, fit the continuum, and normalize the spectrum.
+- `Step 1`: Compare with the compact MK main sequence and select the most likely broad spectral type.
+- `Step 2`: Compare with the corresponding subtype series in Gray's Digital Atlas, using diagnostic line intensities and ratios.
+- `Step 3`: Compare with the nearest Gray luminosity sequence and assign the luminosity class, recording the supporting evidence.
+
 ## Panel 1: Spectrum Upload
 
 ### Upload FITS or TXT
