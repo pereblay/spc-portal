@@ -146,6 +146,13 @@ only content that is longer than a complete page is continued across pages.
 ### Download Markdown
 Exports the same report content as Markdown.
 
+## Clear Analysis
+
+The `Clear analysis` button below the sidebar panels removes the loaded
+spectrum and resets the crop, normalization, manual continuum points,
+measurements, evidence, classification, report fields, and MK comparison. The
+portal then returns to its empty initial state, ready for a new spectrum.
+
 ## Original Spectrum Plot
 
 The original spectrum plot shows the full loaded spectrum. The current crop range is highlighted. In manual continuum mode, a custom click selector appears here and allows continuum points to be selected directly.

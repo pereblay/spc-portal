@@ -195,6 +195,8 @@ st.markdown(
 
 
 def init_state() -> None:
+    st.session_state.setdefault("analysis_epoch", 0)
+    st.session_state.setdefault("use_example_spectrum", False)
     st.session_state.setdefault("show_help", False)
     st.session_state.setdefault("manual_points", [])
     st.session_state.setdefault("manual_selection_active", False)
@@ -223,6 +225,13 @@ def clear_normalization() -> None:
     st.session_state.continuum = None
     st.session_state.normalized = None
     st.session_state.normalization_context = None
+
+
+def clear_analysis() -> None:
+    next_epoch = int(st.session_state.get("analysis_epoch", 0)) + 1
+    st.session_state.clear()
+    st.session_state["analysis_epoch"] = next_epoch
+    st.session_state["use_example_spectrum"] = False
 
 
 @st.cache_data(show_spinner=False, ttl=7 * 24 * 60 * 60)
@@ -622,6 +631,7 @@ def main() -> None:
                 "Upload FITS or TXT",
                 type=["fits", "fit", "fts", "txt", "dat", "csv", "tsv"],
                 on_change=clear_normalization,
+                key=f"spectrum_upload_{st.session_state.analysis_epoch}",
             )
             if uploaded is not None and Path(uploaded.name).suffix.lower() in {".fits", ".fit", ".fts"}:
                 try:
@@ -662,7 +672,7 @@ def main() -> None:
                         )
                 except Exception as exc:
                     st.warning(f"Could not inspect FITS extensions: {exc}")
-            use_example = st.toggle("Use example spectrum", value=False)
+            use_example = st.toggle("Use example spectrum", key="use_example_spectrum")
 
     try:
         if uploaded is not None and Path(uploaded.name).suffix.lower() in {".fits", ".fit", ".fts"}:
@@ -786,6 +796,13 @@ def main() -> None:
             report_download_slot = st.empty()
 
         st.button("Help", use_container_width=True, on_click=show_help, key="sidebar_help_bottom")
+        st.divider()
+        st.button(
+            "Clear analysis",
+            use_container_width=True,
+            on_click=clear_analysis,
+            key="sidebar_clear_analysis",
+        )
 
     if st.session_state.show_help:
         render_help_page()
