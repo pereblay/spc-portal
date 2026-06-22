@@ -135,8 +135,13 @@ Exports a standardized PDF report including:
 - equivalent-width table,
 - line-ratio table,
 - spectral type and luminosity class,
+- classification confidence (low, medium, or high),
 - student justifications,
 - comments.
+
+The report uses a compact page flow to keep the page count low. A section or
+measurement table is moved to the next page when it would otherwise be split;
+only content that is longer than a complete page is continued across pages.
 
 ### Download Markdown
 Exports the same report content as Markdown.
