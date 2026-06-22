@@ -857,7 +857,7 @@ def main() -> None:
         render_classification_workflow()
 
     if normalization_method == "Manual points":
-        with st.expander("Continuum points", expanded=True):
+        with st.expander("Continuum points", expanded=False):
             st.caption("Manual fallback: enter only the wavelength; flux is interpolated from the spectrum.")
             pcols = st.columns([1, 1])
             manual_wl = pcols[0].number_input(
