@@ -683,11 +683,21 @@ def main() -> None:
 
     with st.sidebar:
         with st.expander("2. Crop and normalization", expanded=True):
-            wl_min, wl_max = st.slider(
-                "Wavelength range",
+            wavelength_inputs = st.columns(2)
+            wl_min = wavelength_inputs[0].number_input(
+                "Minimum wavelength",
                 min_value=float(spectrum.wavelength_min),
                 max_value=float(spectrum.wavelength_max),
-                value=(float(spectrum.wavelength_min), float(spectrum.wavelength_max)),
+                value=float(spectrum.wavelength_min),
+                format="%.2f",
+                on_change=clear_normalization,
+            )
+            wl_max = wavelength_inputs[1].number_input(
+                "Maximum wavelength",
+                min_value=float(spectrum.wavelength_min),
+                max_value=float(spectrum.wavelength_max),
+                value=float(spectrum.wavelength_max),
+                format="%.2f",
                 on_change=clear_normalization,
             )
             normalization_method = st.selectbox(
@@ -789,6 +799,10 @@ def main() -> None:
         clear_normalization()
     if normalization_method != "Manual points":
         continuum_window_size = 15
+
+    if wl_min >= wl_max:
+        st.warning("Minimum wavelength must be lower than maximum wavelength.")
+        return
 
     cropped_wl, cropped_flux = crop_spectrum(spectrum.wavelength, spectrum.flux, wl_min, wl_max)
     if cropped_wl.size < 3:

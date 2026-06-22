@@ -42,7 +42,7 @@ Loads a synthetic teaching spectrum. This is useful for testing the interface be
 ## Panel 2: Crop And Normalization
 
 ### Wavelength Range
-Selects the wavelength interval used for normalization, line display, equivalent-width measurements, line ratios, and the normalized plot.
+The `Minimum wavelength` and `Maximum wavelength` numeric fields define the interval used for normalization, line display, equivalent-width measurements, line ratios, and the normalized plot. The minimum value must be lower than the maximum value.
 
 The selected region is shown as a shaded band on the original spectrum.
 
