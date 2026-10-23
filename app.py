@@ -23,9 +23,8 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-st.markdown(
-    f"<style>{Path(__file__).with_name('assets').joinpath('viu.css').read_text(encoding='utf-8')}</style>",
-    unsafe_allow_html=True,
+st.html(
+    f"<style>{Path(__file__).with_name('assets').joinpath('viu.css').read_text(encoding='utf-8')}</style>"
 )
 
 
