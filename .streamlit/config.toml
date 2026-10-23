@@ -1,8 +1,10 @@
 [theme]
-primaryColor = "#343a40"
+base = "light"
+primaryColor = "#e84e0f"
 backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#f8f9fa"
-textColor = "#212529"
-linkColor = "#343a40"
-borderColor = "#dee2e6"
+secondaryBackgroundColor = "#f6f4f1"
+textColor = "#252525"
+linkColor = "#a53408"
+borderColor = "#dedbd7"
 showWidgetBorder = true
+font = "sans serif"

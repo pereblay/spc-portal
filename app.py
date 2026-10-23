@@ -17,179 +17,14 @@ from spectral_portal.core.report import append_pdf_report, build_markdown_report
 
 
 st.set_page_config(
-    page_title="Spectral classification",
+    page_title="VIU | Spectral Classification",
     page_icon="",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 st.markdown(
-    """
-    <style>
-    :root {
-      --portal-dark: #343a40;
-      --portal-dark-hover: #212529;
-      --primary-color: #343a40;
-      --primaryColor: #343a40;
-    }
-    .stApp {
-      --primary-color: #343a40;
-      --primaryColor: #343a40;
-      --primary-color-light: #495057;
-      --primaryColorLight: #495057;
-    }
-    .stButton > button[kind="primary"],
-    .stDownloadButton > button[kind="primary"] {
-      background-color: var(--portal-dark) !important;
-      border-color: var(--portal-dark) !important;
-      color: white !important;
-    }
-    .stButton > button[kind="primary"]:hover,
-    .stDownloadButton > button[kind="primary"]:hover {
-      background-color: var(--portal-dark-hover) !important;
-      border-color: var(--portal-dark-hover) !important;
-      color: white !important;
-    }
-    [data-baseweb="tag"] {
-      background-color: var(--portal-dark) !important;
-      color: white !important;
-    }
-    [data-baseweb="tag"] svg {
-      color: white !important;
-    }
-    /* Streamlit/BaseWeb active accents: sliders, toggles, checkboxes, tabs. */
-    [data-baseweb="slider"] [role="slider"] {
-      background-color: var(--portal-dark) !important;
-      border-color: var(--portal-dark) !important;
-      box-shadow: none !important;
-    }
-    [data-testid="stSlider"] [role="slider"] {
-      background: var(--portal-dark) !important;
-      background-color: var(--portal-dark) !important;
-      border-color: var(--portal-dark) !important;
-      color: var(--portal-dark) !important;
-    }
-    [data-baseweb="slider"] div[style*="255, 75, 75"],
-    [data-baseweb="slider"] div[style*="rgb(255"],
-    [data-baseweb="slider"] div[style*="#ff"],
-    [data-testid="stSlider"] div[style*="255, 75, 75"],
-    [data-testid="stSlider"] div[style*="rgb(255"],
-    [data-testid="stSlider"] div[style*="#ff"] {
-      background: var(--portal-dark) !important;
-      background-color: var(--portal-dark) !important;
-      border-color: var(--portal-dark) !important;
-      color: var(--portal-dark) !important;
-    }
-    [data-testid="stSlider"] div[style*="linear-gradient"] {
-      background: linear-gradient(to right, var(--portal-dark), var(--portal-dark)) !important;
-    }
-    [data-testid="stSlider"] [data-testid="stMarkdownContainer"] p,
-    [data-testid="stSlider"] label,
-    [data-testid="stSlider"] span,
-    [data-testid="stSlider"] div {
-      color: var(--portal-dark) !important;
-    }
-    [role="checkbox"][aria-checked="true"],
-    [data-testid="stCheckbox"] [role="checkbox"][aria-checked="true"],
-    [data-testid="stToggle"] [role="checkbox"][aria-checked="true"] {
-      background-color: var(--portal-dark) !important;
-      border-color: var(--portal-dark) !important;
-    }
-    [data-testid="stCheckbox"] [data-baseweb="checkbox"] > div,
-    [data-testid="stCheckbox"] label > div:first-child,
-    [data-testid="stToggle"] [data-baseweb="checkbox"] > div,
-    [data-testid="stToggle"] label > div:first-child {
-      border-color: var(--portal-dark) !important;
-    }
-    [data-testid="stCheckbox"] [aria-checked="true"] div,
-    [data-testid="stToggle"] [aria-checked="true"] div {
-      background: var(--portal-dark) !important;
-      background-color: var(--portal-dark) !important;
-      border-color: var(--portal-dark) !important;
-    }
-    [role="checkbox"][aria-checked="true"] svg,
-    [data-testid="stCheckbox"] [role="checkbox"][aria-checked="true"] svg,
-    [data-testid="stToggle"] [role="checkbox"][aria-checked="true"] svg {
-      color: white !important;
-      fill: white !important;
-    }
-    [data-baseweb="switch"] div[style*="255, 75, 75"],
-    [data-testid="stToggle"] div[style*="255, 75, 75"],
-    [data-testid="stToggle"] div[style*="rgb(255"],
-    [data-testid="stToggle"] div[style*="#ff"] {
-      background: var(--portal-dark) !important;
-      background-color: var(--portal-dark) !important;
-      border-color: var(--portal-dark) !important;
-    }
-    [data-baseweb="tab-highlight"] {
-      background-color: var(--portal-dark) !important;
-    }
-    [data-testid="stTabs"] [data-baseweb="tab-highlight"] {
-      background: var(--portal-dark) !important;
-      background-color: var(--portal-dark) !important;
-    }
-    [data-baseweb="tab"][aria-selected="true"],
-    [data-baseweb="tab"][aria-selected="true"] p,
-    button[role="tab"][aria-selected="true"],
-    button[role="tab"][aria-selected="true"] p,
-    [data-testid="stTabs"] button[aria-selected="true"],
-    [data-testid="stTabs"] button[aria-selected="true"] p {
-      color: var(--portal-dark) !important;
-    }
-    [data-baseweb="tab-border"] {
-      background-color: #dee2e6 !important;
-    }
-    [style*="rgb(255, 75, 75)"],
-    [style*="rgba(255, 75, 75"],
-    [style*="#ff4b4b"],
-    [style*="#FF4B4B"] {
-      border-color: var(--portal-dark) !important;
-      color: var(--portal-dark) !important;
-      caret-color: var(--portal-dark) !important;
-    }
-    .classification-workflow {
-      margin: 0.8rem 0 1.2rem;
-      padding: 0.85rem 0 0.15rem;
-      border-top: 1px solid #ced4da;
-      border-bottom: 1px solid #dee2e6;
-    }
-    .classification-workflow-title {
-      margin: 0 0 0.75rem;
-      color: #212529;
-      font-size: 1rem;
-      font-weight: 650;
-    }
-    .classification-workflow-steps {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 1.1rem;
-    }
-    .classification-workflow-step {
-      min-width: 0;
-      padding: 0 0 0.85rem;
-    }
-    .classification-workflow-number {
-      display: block;
-      margin-bottom: 0.25rem;
-      color: #343a40;
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-    .classification-workflow-step p {
-      margin: 0;
-      color: #495057;
-      font-size: 0.88rem;
-      line-height: 1.45;
-    }
-    @media (max-width: 780px) {
-      .classification-workflow-steps {
-        grid-template-columns: 1fr;
-        gap: 0.25rem;
-      }
-    }
-    </style>
-    """,
+    f"<style>{Path(__file__).with_name('assets').joinpath('viu.css').read_text(encoding='utf-8')}</style>",
     unsafe_allow_html=True,
 )
 
@@ -379,8 +214,8 @@ def render_original_plot(
             y=spectrum.flux,
             mode="lines+markers",
             name="Original flux",
-            line=dict(color="#243b53", width=1.25),
-            marker=dict(color="#243b53", size=3, opacity=0.22),
+            line=dict(color="#252525", width=1.25),
+            marker=dict(color="#252525", size=3, opacity=0.22),
             hovertemplate="Wavelength=%{x:.3f}<br>Flux=%{y:.4e}<extra></extra>",
         )
     )
@@ -391,7 +226,7 @@ def render_original_plot(
                 y=continuum,
                 mode="lines",
                 name="Fitted continuum",
-                line=dict(color="#d95f02", width=2.0, dash="dash"),
+                line=dict(color="#e84e0f", width=2.0, dash="dash"),
                 hovertemplate="Wavelength=%{x:.3f}<br>Continuum=%{y:.4e}<extra></extra>",
             )
         )
@@ -402,7 +237,7 @@ def render_original_plot(
                 y=[point[1] for point in manual_points],
                 mode="markers",
                 name="Continuum points",
-                marker=dict(color="#d95f02", size=8, symbol="circle-open", line=dict(width=2)),
+                marker=dict(color="#e84e0f", size=8, symbol="circle-open", line=dict(width=2)),
                 hovertemplate="Wavelength=%{x:.3f}<br>Flux=%{y:.4e}<extra></extra>",
             )
         )
@@ -410,7 +245,7 @@ def render_original_plot(
     fig.add_vrect(
         x0=min(wl_min, wl_max),
         x1=max(wl_min, wl_max),
-        fillcolor="#74c0fc",
+        fillcolor="#e84e0f",
         opacity=0.16,
         line_width=0,
         annotation_text="crop",
@@ -427,6 +262,9 @@ def render_original_plot(
         xaxis_title="Wavelength",
         yaxis_title="Flux",
         template="plotly_white",
+        font=dict(family="Arial, sans-serif", color="#252525"),
+        paper_bgcolor="#ffffff",
+        plot_bgcolor="#ffffff",
     )
     fig.update_xaxes(showgrid=True, gridcolor="#e9ecef", zeroline=False)
     fig.update_yaxes(showgrid=True, gridcolor="#e9ecef", range=[ymin, ymax], tickformat=y_tickformat(spectrum.flux))
@@ -448,7 +286,7 @@ def render_normalized_plot(
                 y=normalized,
                 mode="lines",
                 name="Normalized spectrum",
-                line=dict(color="#006d77", width=1.45),
+                line=dict(color="#252525", width=1.45),
             )
         )
         fig.add_hline(y=1.0, line_width=1, line_dash="dot", line_color="#6c757d")
@@ -502,6 +340,9 @@ def render_normalized_plot(
         xaxis_title="Wavelength",
         yaxis_title="Normalized flux",
         template="plotly_white",
+        font=dict(family="Arial, sans-serif", color="#252525"),
+        paper_bgcolor="#ffffff",
+        plot_bgcolor="#ffffff",
     )
     fig.update_xaxes(
         showgrid=True,
@@ -582,6 +423,9 @@ def render_mk_comparison_plot(
         height=820,
         margin=dict(l=115, r=20, t=58, b=60),
         template="plotly_white",
+        font=dict(family="Arial, sans-serif", color="#252525"),
+        paper_bgcolor="#ffffff",
+        plot_bgcolor="#ffffff",
         showlegend=False,
         hovermode="closest",
         title=dict(text="Studied spectrum compared with the JHC main sequence", x=0.5, xanchor="center", font=dict(size=16)),
@@ -634,10 +478,20 @@ def normalization_context(
 def main() -> None:
     init_state()
 
-    st.title("Spectral Classification Portal")
+    logo_col, identity_col = st.columns([1, 3], vertical_alignment="center")
+    with logo_col:
+        st.image(str(Path(__file__).with_name("assets") / "mi_logo.png"), width=260)
+    with identity_col:
+        st.markdown('<div class="viu-eyebrow">SCIENCE & TECHNOLOGY · TEACHING LAB</div>', unsafe_allow_html=True)
+        st.title("Spectral Classification Portal")
+        st.caption("Explore stellar spectra. Build evidence. Explain your classification.")
+    st.markdown('<div class="viu-rule"></div>', unsafe_allow_html=True)
     selected_fits_hdu: int | None = None
 
     with st.sidebar:
+        st.markdown('<div class="viu-eyebrow">YOUR WORKSPACE</div>', unsafe_allow_html=True)
+        st.markdown("### Spectrum laboratory")
+        st.caption("From observation to classification")
         with st.expander("1. Spectrum upload", expanded=True):
             uploaded = st.file_uploader(
                 "Upload FITS or TXT",

@@ -114,15 +114,15 @@ export default function (component) {
     const px = sx(point[0])
     const py = sy(point[1])
     if (Number.isFinite(px) && Number.isFinite(py)) {
-      selected += `<circle cx="${px}" cy="${py}" r="5" fill="#fff" stroke="#d95f02" stroke-width="2" />`
+      selected += `<circle cx="${px}" cy="${py}" r="5" fill="#fff" stroke="#e84e0f" stroke-width="2" />`
     }
   }
 
   root.innerHTML = `
     <svg id="continuum-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Continuum selector">
-      <rect x="${margin.left}" y="${margin.top}" width="${plotW}" height="${plotH}" fill="#e7f5ff" opacity="0.55" />
+      <rect x="${margin.left}" y="${margin.top}" width="${plotW}" height="${plotH}" fill="#fff0e7" opacity="0.55" />
       ${grid}
-      <polyline points="${polyline}" fill="none" stroke="#243b53" stroke-width="1.4" />
+      <polyline points="${polyline}" fill="none" stroke="#252525" stroke-width="1.4" />
       ${selected}
       <rect x="${margin.left}" y="${margin.top}" width="${plotW}" height="${plotH}" fill="none" stroke="#212529" stroke-width="1.2" />
       ${tickLabels}

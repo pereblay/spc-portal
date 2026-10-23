@@ -210,3 +210,8 @@ Explanation of why the chosen luminosity class is supported by the observed evid
 
 ### General Comments
 Additional classification notes.
+
+
+## VIU Appearance
+
+The interface uses the supplied VIU logo, white and orange surfaces, serif display headings and sans-serif controls. The four-step classification workflow, MK comparison, measurements and report tools retain their existing behavior. Spectrum traces use charcoal, continuum markers use orange, and reference-line families keep distinct scientific colors. Display fonts use local system fallbacks. Appearance settings are in `.streamlit/config.toml` and `assets/viu.css`.

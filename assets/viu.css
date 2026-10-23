@@ -1,0 +1,71 @@
+/* VIU-inspired teaching workspace. Logo supplied by the project owner. */
+:root { --viu-orange: #e84e0f; --viu-ink: #252525; --viu-border: #dedbd7; }
+.stApp { background: #fff; color: var(--viu-ink); }
+[data-testid="stMainBlockContainer"] { padding-top: 2.4rem; max-width: 1600px; }
+h1, h2 { font-family: Georgia, 'Times New Roman', serif !important; font-weight: 400 !important; letter-spacing: -.025em; }
+h1 { font-size: clamp(2rem, 3.2vw, 3rem) !important; padding-top: .25rem !important; }
+h3 { font-weight: 600 !important; letter-spacing: -.015em; }
+.viu-eyebrow { color: #a53408; font: 600 .72rem/1.5 Arial, sans-serif; letter-spacing: .13em; margin-top: .4rem; }
+.viu-rule { height: 3px; background: var(--viu-orange); margin: .8rem 0 1.5rem; }
+[data-testid="stSidebar"] { background: #f6f4f1; border-right: 1px solid var(--viu-border); }
+[data-testid="stSidebar"] [data-testid="stExpander"] { background: #fff; border: 1px solid var(--viu-border); border-radius: 4px; }
+[data-testid="stExpander"] details summary { font-weight: 600; }
+.stButton > button, .stDownloadButton > button { border-radius: 4px; font-weight: 600; min-height: 2.65rem; }
+.stButton > button[kind="primary"], .stDownloadButton > button[kind="primary"] { background: #b83a09; border-color: #b83a09; color: white; }
+.stButton > button[kind="primary"]:hover, .stDownloadButton > button[kind="primary"]:hover { background: #962f07; border-color: #962f07; color: white; }
+.stButton > button[kind="secondary"]:hover, .stDownloadButton > button[kind="secondary"]:hover { color: #a53408; border-color: var(--viu-orange); background: #fff4ed; }
+button:focus-visible, a:focus-visible { outline: 3px solid #a53408 !important; outline-offset: 3px; }
+[data-testid="stFileUploader"] { border-radius: 4px; }
+[data-testid="stMetric"] { background: #faf9f7; border: 1px solid #e6e2de; border-top: 3px solid var(--viu-orange); padding: 1rem 1.2rem; border-radius: 3px; }
+[data-testid="stMetricValue"] { font-family: Georgia, 'Times New Roman', serif; }
+[data-baseweb="tab-list"] { gap: 1.5rem; border-bottom: 1px solid var(--viu-border); }
+[data-baseweb="tab"][aria-selected="true"] { color: #a53408; }
+[data-baseweb="tab-highlight"] { background-color: var(--viu-orange); }
+[data-testid="stPlotlyChart"] { border: 1px solid #e6e2de; border-radius: 4px; padding: .3rem; background: white; }
+.atlas-link { display: inline-block; width: 100%; box-sizing: border-box; padding: .55rem .7rem; border: 1px solid #d3ccc5; border-radius: 4px; color: #a53408 !important; text-align: center; text-decoration: none !important; font-weight: 600; line-height: 1.4; }
+.atlas-link:hover { background: #fff4ed; border-color: var(--viu-orange); }
+@media (max-width: 700px) { [data-testid="stMainBlockContainer"] { padding-top: 1.3rem; } h1 { font-size: 2rem !important; } [data-testid="stMetric"] { padding: .65rem; } }
+
+    .classification-workflow {
+      margin: 0.8rem 0 1.2rem;
+      padding: 0.85rem 0 0.15rem;
+      border-top: 1px solid #ced4da;
+      border-bottom: 1px solid #dee2e6;
+    }
+    .classification-workflow-title {
+      margin: 0 0 0.75rem;
+      color: #212529;
+      font-size: 1rem;
+      font-weight: 650;
+    }
+    .classification-workflow-steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1.1rem;
+    }
+    .classification-workflow-step {
+      min-width: 0;
+      padding: 0 0 0.85rem;
+    }
+    .classification-workflow-number {
+      display: block;
+      margin-bottom: 0.25rem;
+      color: #343a40;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .classification-workflow-step p {
+      margin: 0;
+      color: #495057;
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+    @media (max-width: 780px) {
+      .classification-workflow-steps {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+      }
+    }
+
+.classification-workflow-number { color: #a53408; letter-spacing: .08em; }
