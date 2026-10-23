@@ -478,13 +478,14 @@ def normalization_context(
 def main() -> None:
     init_state()
 
-    logo_col, identity_col = st.columns([1, 3], vertical_alignment="center")
+    logo_col, identity_col = st.columns([1, 4], vertical_alignment="center")
     with logo_col:
         st.image(str(Path(__file__).with_name("assets") / "mi_logo.png"), width=260)
     with identity_col:
-        st.markdown('<div class="viu-eyebrow">SCIENCE & TECHNOLOGY · TEACHING LAB</div>', unsafe_allow_html=True)
-        st.title("Spectral Classification Portal")
-        st.caption("Explore stellar spectra. Build evidence. Explain your classification.")
+        with st.container(key="viu-identity"):
+            st.markdown('<div class="viu-eyebrow viu-overline">SCIENCE & TECHNOLOGY · TEACHING LAB</div>', unsafe_allow_html=True)
+            st.title("Spectral Classification Portal")
+            st.caption("Explore stellar spectra. Build evidence. Explain your classification.")
     st.markdown('<div class="viu-rule"></div>', unsafe_allow_html=True)
     selected_fits_hdu: int | None = None
 
