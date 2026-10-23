@@ -16,16 +16,6 @@ from spectral_portal.core.normalize import fit_continuum, normalize_flux
 from spectral_portal.core.report import append_pdf_report, build_markdown_report, build_pdf_report
 
 
-st.set_page_config(
-    page_title="VIU | Spectral Classification",
-    page_icon="",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
-
-st.html(
-    f"<style>{Path(__file__).with_name('assets').joinpath('viu.css').read_text(encoding='utf-8')}</style>"
-)
 
 
 def init_state() -> None:
@@ -475,6 +465,17 @@ def normalization_context(
 
 
 def main() -> None:
+    st.set_page_config(
+        page_title="VIU | Spectral Classification",
+        page_icon="",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
+
+    st.html(
+        f"<style>{Path(__file__).with_name('assets').joinpath('viu.css').read_text(encoding='utf-8')}</style>"
+    )
+
     init_state()
 
     logo_col, identity_col = st.columns([1, 4], vertical_alignment="center")
